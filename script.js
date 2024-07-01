@@ -12,15 +12,15 @@ window.addEventListener('resize', resizeCanvas); // Resize canvas when window si
 
 // Load images
 const playerImage = new Image();
-playerImage.src = 'player.png';
+playerImage.src = 'img/player.png';
 const platformImage = new Image();
-platformImage.src = 'platform.png';
+platformImage.src = 'img/platform.png';
 const coinImage = new Image();
-coinImage.src = 'coin.png';
+coinImage.src = 'img/coin.png';
 const coin2Image = new Image();
-coin2Image.src = 'coin2.png'; // Replace with your coin2 image path
+coin2Image.src = 'img/coin2.png'; // Replace with your coin2 image path
 const enemyImage = new Image();
-enemyImage.src = 'enemy.png';
+enemyImage.src = 'img/enemy.png';
 
 // Game variables
 let score = 0;
