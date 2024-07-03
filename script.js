@@ -1,13 +1,25 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+// Funzione per verificare se il dispositivo è mobile
+function isMobileDevice() {
+    return /Mobi|Android/i.test(navigator.userAgent);
+}
+
+// Funzione per ridimensionare il canvas in base al dispositivo
 function resizeCanvas() {
-    canvas.width = Math.min(800, window.innerWidth);
-    canvas.height = Math.min(400, window.innerHeight / 2);
+    if (isMobileDevice()) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight / 2;
+    } else {
+        canvas.width = 1024;
+        canvas.height = 640;
+    }
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
+// Caricamento immagini e suoni
 const loadImage = src => {
     const img = new Image();
     img.src = src;
@@ -19,18 +31,20 @@ const playerImage = loadImage('img/player.png');
 const platformImage = loadImage('img/platform.png');
 const coinImage = loadImage('img/coin.png');
 const enemyImage = loadImage('img/enemy.png');
-const bgImage = loadImage('img/background.png'); // Immagine di sfondo
-const gameOverImage = loadImage('img/gameover.png'); // Immagine di game over
+const bgImage = loadImage('img/background.png');
+const gameOverImage = loadImage('img/gameover.png');
 
 const jumpSound = loadSound('sound/jumpSound.mp3');
 const coinSound = loadSound('sound/coinSound.mp3');
 const gameOverSound = loadSound('sound/gameOverSound.mp3');
 
+// Variabili di gioco
 let score = 0;
 let gameSpeed = 2;
 let isGameOver = true;
 let isGameStarted = false;
 
+// Oggetto giocatore
 const player = {
     x: 50,
     y: canvas.height - 100,
@@ -43,8 +57,49 @@ const player = {
     grounded: false
 };
 
+// Controlli da tastiera
 const keys = { right: false, left: false, up: false };
 
+// Gestione eventi da tastiera
+document.addEventListener('keydown', handleKeyDown);
+document.addEventListener('keyup', handleKeyUp);
+
+function handleKeyDown(e) {
+    if (e.code === 'ArrowRight') keys.right = true;
+    if (e.code === 'ArrowLeft') keys.left = true;
+    if (e.code === 'ArrowUp') keys.up = true;
+}
+
+function handleKeyUp(e) {
+    if (e.code === 'ArrowRight') keys.right = false;
+    if (e.code === 'ArrowLeft') keys.left = false;
+    if (e.code === 'ArrowUp') keys.up = false;
+}
+
+// Funzione per aggiornare il giocatore basato sul touch input
+function updatePlayerForTouch() {
+    if (touch.x !== null && touch.y !== null) {
+        if (touch.x > canvas.width / 2) {
+            keys.right = true;
+            keys.left = false;
+        } else {
+            keys.left = true;
+            keys.right = false;
+        }
+
+        if (touch.y < canvas.height / 2 && player.grounded) {
+            keys.up = true;
+        } else {
+            keys.up = false;
+        }
+    } else {
+        keys.right = false;
+        keys.left = false;
+        keys.up = false;
+    }
+}
+
+// Array di piattaforme, monete e nemici
 let platforms = [
     { x: 0, y: canvas.height - 50, width: canvas.width, height: 50 },
     { x: 400, y: canvas.height - 60, width: 80, height: 60 },
@@ -68,21 +123,7 @@ let enemyFrequency = 3000;
 let maxEnemies = 5;
 let lastEnemySpawn = 0;
 
-document.addEventListener('keydown', handleKeyDown);
-document.addEventListener('keyup', handleKeyUp);
-
-function handleKeyDown(e) {
-    if (e.code === 'ArrowRight') keys.right = true;
-    if (e.code === 'ArrowLeft') keys.left = true;
-    if (e.code === 'ArrowUp') keys.up = true;
-}
-
-function handleKeyUp(e) {
-    if (e.code === 'ArrowRight') keys.right = false;
-    if (e.code === 'ArrowLeft') keys.left = false;
-    if (e.code === 'ArrowUp') keys.up = false;
-}
-
+// Pulsante di avvio del gioco
 document.getElementById('startButton').addEventListener('click', startButtonClick);
 
 function startButtonClick() {
@@ -90,6 +131,7 @@ function startButtonClick() {
     resetBackgroundMusic();
 }
 
+// Funzione per avviare il gioco
 function startGame() {
     score = 0;
     gameSpeed = 2;
@@ -113,24 +155,23 @@ function startGame() {
     requestAnimationFrame(gameLoop);
 }
 
+// Loop di gioco principale
 function gameLoop(timestamp) {
     if (isGameOver) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawGameOver(); // Disegna l'immagine di game over
-
+        drawGameOver();
         ctx.fillStyle = 'black';
         ctx.font = '24px "Press Start 2P"';
         const scoreText = `Score: ${score}`;
         const scoreTextWidth = ctx.measureText(scoreText).width;
         ctx.fillText(scoreText, canvas.width / 2 - scoreTextWidth / 2, canvas.height / 2 + 30);
-
         document.getElementById('startButton').style.display = 'block';
         pauseBackgroundMusic();
         return;
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBackground(); // Disegna l'immagine di sfondo
+    drawBackground();
     drawPlatforms();
     updatePlatforms();
     drawPlayer();
@@ -143,6 +184,7 @@ function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
 }
 
+// Funzioni di disegno
 function drawGameOver() {
     ctx.drawImage(gameOverImage, 0, 0, canvas.width, canvas.height);
 }
@@ -183,6 +225,7 @@ function drawScore() {
     ctx.fillText(`Score: ${score}`, 10, 30);
 }
 
+// Funzioni di aggiornamento
 function updatePlayer() {
     if (keys.right) player.x += player.speed;
     if (keys.left) player.x -= player.speed;
@@ -203,12 +246,12 @@ function updatePlayer() {
             player.x + player.width > platform.x &&
             player.y < platform.y + platform.height &&
             player.y + player.height > platform.y) {
-                if (player.dy > 0) {
-                    player.y = platform.y - player.height;
-                    player.dy = 0;
-                    player.grounded = true;
-                }
+            if (player.dy > 0) {
+                player.y = platform.y - player.height;
+                player.dy = 0;
+                player.grounded = true;
             }
+        }
     });
 
     coins = coins.filter(coin => {
@@ -216,10 +259,10 @@ function updatePlayer() {
             player.x + player.width > coin.x &&
             player.y < coin.y + coin.height &&
             player.y + player.height > coin.y) {
-                score++;
-                coinSound.currentTime = 0;
-                coinSound.play();
-                return false;
+            score++;
+            coinSound.currentTime = 0;
+            coinSound.play();
+            return false;
         }
         return true;
     });
@@ -229,9 +272,9 @@ function updatePlayer() {
             player.x + player.width > enemy.x &&
             player.y < enemy.y + enemy.height &&
             player.y + player.height > enemy.y) {
-                isGameOver = true;
-                gameOverSound.currentTime = 0;
-                gameOverSound.play();
+            isGameOver = true;
+            gameOverSound.currentTime = 0;
+            gameOverSound.play();
         }
     });
 
@@ -256,9 +299,9 @@ function updatePlatforms() {
 
             let overlaps = platforms.some(existingPlatform => {
                 return (newX < existingPlatform.x + existingPlatform.width &&
-                        newX + newWidth > existingPlatform.x &&
-                        newY < existingPlatform.y + existingPlatform.height &&
-                        newY + 50 > existingPlatform.y);
+                    newX + newWidth > existingPlatform.x &&
+                    newY < existingPlatform.y + existingPlatform.height &&
+                    newY + 50 > existingPlatform.y);
             });
 
             if (!overlaps) {
@@ -305,6 +348,7 @@ function updateEnemies(timestamp) {
     });
 }
 
+// Musica di background
 const bgMusic = new Audio('sound/bgMusic.mp3');
 
 function playBackgroundMusic() {
