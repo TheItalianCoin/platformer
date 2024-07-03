@@ -7,60 +7,43 @@ body {
     background-color: #87CEEB;
     font-family: 'Press Start 2P', cursive;
     position: relative;
+    overflow: hidden;
 }
 
 canvas {
     border: 2px solid black;
-    background-color: #7ec850;
-    position: relative;
-}
-
-#controls {
     position: absolute;
-    top: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    display: none;
 }
 
 button {
-    width: 100px;
-    height: 50px;
-    font-size: 16px;
-    margin: 10px;
-    cursor: pointer;
-    background-color: #ccc;
-    border: 2px solid #000;
-    border-radius: 5px;
-}
-
-#startButton {
-    width: 200px;
-    height: 80px;
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
     font-size: 24px;
+    padding: 15px 30px;
+    min-width: 200px;
+    text-align: center;
     background-color: #4CAF50;
-    border: none;
     color: white;
-    border-radius: 5px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-#restartButton {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
-    width: 150px;
-    height: 50px;
-    font-size: 16px;
+    border: none;
     cursor: pointer;
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+button:hover {
+    background-color: #45a049;
+}
+
+#introVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}

@@ -5,15 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Infinite Platformer Game</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Collegamento al font "Press Start 2P" da Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
+    <video id="introVideo" autoplay muted loop>
+        <source src="img/intro.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
     <canvas id="gameCanvas"></canvas>
-    <div id="controls">
-        <button id="restartButton" style="display: none;">Restart</button>
-    </div>
+
     <button id="startButton">Click to Start</button>
+
     <script src="script.js"></script>
 </body>
 </html>
