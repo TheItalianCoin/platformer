@@ -20,7 +20,7 @@ const platformImage = loadImage('img/platform.png');
 const coinImage = loadImage('img/coin.png');
 const enemyImage = loadImage('img/enemy.png');
 const bgImage = loadImage('img/background.png'); // Immagine di sfondo
-const gameOverImage = loadImage('img/gameover.gif'); // Immagine di game over
+const gameOverImage = loadImage('img/gameover.png'); // Immagine di game over
 
 const jumpSound = loadSound('sound/jumpSound.mp3');
 const coinSound = loadSound('sound/coinSound.mp3');
